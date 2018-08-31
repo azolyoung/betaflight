@@ -56,6 +56,7 @@ typedef enum {
     BEEPER_CAM_CONNECTION_OPEN,     // When the 5 key simulation stated
     BEEPER_CAM_CONNECTION_CLOSE,    // When the 5 key simulation stop
     BEEPER_RC_SMOOTHING_INIT_FAIL,  // Warning beep pattern when armed and rc smoothing has not initialized filters
+    BEEPER_CAM_CONNECTION_CLOSE22,    // When the 5 key simulation stop
     BEEPER_ALL,                     // Turn ON or OFF all beeper conditions
     // BEEPER_ALL must remain at the bottom of this enum
 } beeperMode_e;
@@ -85,6 +86,7 @@ typedef enum {
     | BEEPER_GET_FLAG(BEEPER_CAM_CONNECTION_OPEN) \
     | BEEPER_GET_FLAG(BEEPER_CAM_CONNECTION_CLOSE) \
     | BEEPER_GET_FLAG(BEEPER_RC_SMOOTHING_INIT_FAIL) \
+    | BEEPER_GET_FLAG(BEEPER_CAM_CONNECTION_CLOSE22) \
     )
 
 #define DSHOT_BEACON_ALLOWED_MODES ( \
