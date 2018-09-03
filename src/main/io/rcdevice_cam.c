@@ -138,7 +138,6 @@ static void rcdeviceSimulationOSDCableFailed(rcdeviceResponseParseContext_t *ctx
     } else {
         rcdeviceInMenu = false;
         waitingDeviceResponse = false;
-        
     }
 }
 

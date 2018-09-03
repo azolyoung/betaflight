@@ -34,9 +34,6 @@
 
 #include "rcdevice.h"
 
-#include "fc/config.h"
-#include "config/feature.h"
-
 #ifdef USE_RCDEVICE
 
 
@@ -45,7 +42,6 @@ typedef struct runcamDeviceExpectedResponseLength_s {
     uint8_t reponseLength;
 } runcamDeviceExpectedResponseLength_t;
 
-// rcdevice protocol v1 response meta
 static runcamDeviceExpectedResponseLength_t expectedResponsesLength[] = {
     { RCDEVICE_PROTOCOL_COMMAND_GET_DEVICE_INFO,            5},
     { RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_PRESS,      2},
@@ -308,7 +304,7 @@ bool runcamDeviceSimulateCameraButton(runcamDevice_t *device, uint8_t operation)
 void runcamDeviceOpen5KeyOSDCableConnection(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc)
 {
     uint8_t operation = RCDEVICE_PROTOCOL_5KEY_CONNECTION_OPEN;
-    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION, &operation, sizeof(uint8_t), 400, 0, NULL, parseFunc);
+    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION, &operation, sizeof(uint8_t), 400, 2, NULL, parseFunc);
 }
 
 // when the control was stop, must call this method to the camera to disconnect
@@ -350,7 +346,6 @@ static rcdeviceResponseParseContext_t* getWaitingResponse(timeMs_t currentTimeMs
             respCtx->timeoutTimestamp = currentTimeMs + respCtx->timeout;
             respCtx->maxRetryTimes -= 1;
             respCtx = NULL;
-            
             break;
         } else {
             respCtx->result = RCDEVICE_RESP_TIMEOUT;

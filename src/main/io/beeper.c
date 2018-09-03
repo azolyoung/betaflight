@@ -160,11 +160,6 @@ static const uint8_t beep_camCloseBeep[] = {
     10, 8, 5, BEEPER_COMMAND_STOP
 };
 
-// Cam connection close
-static const uint8_t beep_camCloseBeep22[] = {
-    10, 10, 10, 10, 10, 10, 50, 25, BEEPER_COMMAND_STOP
-};
-
 // RC Smoothing filter not initialized - 3 short + 1 long
 static const uint8_t beep_rcSmoothingInitFail[] = {
     10, 10, 10, 10, 10, 10, 50, 25, BEEPER_COMMAND_STOP
@@ -233,8 +228,7 @@ static const beeperTableEntry_t beeperTable[] = {
     { BEEPER_ENTRY(BEEPER_CAM_CONNECTION_OPEN,   20, beep_camOpenBeep,     "CAM_CONNECTION_OPEN") },
     { BEEPER_ENTRY(BEEPER_CAM_CONNECTION_CLOSE,  21, beep_camCloseBeep,    "CAM_CONNECTION_CLOSED") },
     { BEEPER_ENTRY(BEEPER_RC_SMOOTHING_INIT_FAIL,22, beep_rcSmoothingInitFail, "RC_SMOOTHING_INIT_FAIL") },
-    { BEEPER_ENTRY(BEEPER_CAM_CONNECTION_CLOSE22,  23, beep_camCloseBeep22,    "CAM_CONNECTION_CLOSED22") },
-    { BEEPER_ENTRY(BEEPER_ALL,                   24, NULL,                 "ALL") },
+    { BEEPER_ENTRY(BEEPER_ALL,                   23, NULL,                 "ALL") },
 };
 
 static const beeperTableEntry_t *currentBeeperEntry = NULL;
