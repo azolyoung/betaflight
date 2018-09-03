@@ -169,8 +169,10 @@ static void runcamDeviceSendRequestAndWaitingResp(runcamDevice_t *device, uint8_
     responseCtx.parserFunc = parseFunc;
     responseCtx.device = device;
     responseCtx.protocolVer = RCDEVICE_PROTOCOL_VERSION_1_0;
-    memcpy(responseCtx.paramData, paramData, paramDataLen);
-    responseCtx.paramDataLen = paramDataLen;
+    if (paramData != NULL) {
+        memcpy(responseCtx.paramData, paramData, paramDataLen);
+        responseCtx.paramDataLen = paramDataLen;
+    }
     responseCtx.userInfo = userInfo;
     rcdeviceRespCtxQueuePushRespCtx(&watingResponseQueue, &responseCtx);
 
@@ -344,6 +346,7 @@ static rcdeviceResponseParseContext_t* getWaitingResponse(timeMs_t currentTimeMs
                 runcamSplitSendCommand(respCtx->device, respCtx->command);
             }
 
+            respCtx->recvRespLen = 0;
             respCtx->timeoutTimestamp = currentTimeMs + respCtx->timeout;
             respCtx->maxRetryTimes -= 1;
             respCtx = NULL;
