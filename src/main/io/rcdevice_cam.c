@@ -40,6 +40,9 @@
 
 #include "pg/rcdevice.h"
 
+#include "config/feature.h"
+#include "fc/config.h"
+
 #ifdef USE_RCDEVICE
 
 #define IS_HI(X) (rcData[X] > FIVE_KEY_CABLE_JOYSTICK_MAX)
@@ -53,6 +56,9 @@ rcdeviceSwitchState_t switchStates[BOXCAMERA3 - BOXCAMERA1 + 1];
 bool rcdeviceInMenu = false;
 bool isButtonPressed = false;
 bool waitingDeviceResponse = false;
+static bool tryToEnterRemoteMode = false;
+
+static timeUs_t timestampOnButtonPressed = 0;
 
 
 static bool isFeatureSupported(uint8_t feature)
@@ -67,6 +73,11 @@ static bool isFeatureSupported(uint8_t feature)
 bool rcdeviceIsEnabled(void)
 {
     return camDevice->serialPort != NULL;
+}
+
+bool rcdeviceIsInRemoteMode()
+{
+    return rcdeviceInMenu || tryToEnterRemoteMode;
 }
 
 static void rcdeviceCameraControlProcess(void)
@@ -153,6 +164,7 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
         if (operationID == RCDEVICE_PROTOCOL_5KEY_CONNECTION_OPEN) {
             if (errorCode == 1) {
                 rcdeviceInMenu = true;
+                tryToEnterRemoteMode = false;
                 beeper(BEEPER_CAM_CONNECTION_OPEN);
             } else {
                 beeper(BEEPER_CAM_CONNECTION_CLOSE);
@@ -160,6 +172,7 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
         } else if (operationID == RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE) {
             if (errorCode == 1) {
                 rcdeviceInMenu = false;
+                tryToEnterRemoteMode = false;
                 beeper(BEEPER_CAM_CONNECTION_CLOSE);
             }
         }
@@ -241,10 +254,14 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
     }
 
     if (isButtonPressed) {
-        if (IS_MID(YAW) && IS_MID(PITCH) && IS_MID(ROLL)) {
-            rcdeviceSend5KeyOSDCableSimualtionEvent(RCDEVICE_CAM_KEY_RELEASE);
-            waitingDeviceResponse = true;
+        if (currentTimeUs - timestampOnButtonPressed > 200) {
+            if (IS_MID(YAW) && IS_MID(PITCH) && IS_MID(ROLL)) {
+                rcdeviceSend5KeyOSDCableSimualtionEvent(RCDEVICE_CAM_KEY_RELEASE);
+                isButtonPressed = false;
+                waitingDeviceResponse = true;
+            }
         }
+        
     } else {
         if (waitingDeviceResponse) {
             return;
@@ -272,6 +289,8 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
             } else {
                 if (IS_MID(THROTTLE) && IS_MID(ROLL) && IS_MID(PITCH) && IS_HI(YAW)) { // Enter HI YAW
                     key = RCDEVICE_CAM_KEY_CONNECTION_OPEN;
+                    featureEnable(FEATURE_ESC_SENSOR);
+                    tryToEnterRemoteMode = true;
                 }
             }
         }
@@ -279,6 +298,7 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
         if (key != RCDEVICE_CAM_KEY_NONE) {
             rcdeviceSend5KeyOSDCableSimualtionEvent(key);
             isButtonPressed = true;
+            timestampOnButtonPressed = currentTimeUs;
             waitingDeviceResponse = true;
         }
     }

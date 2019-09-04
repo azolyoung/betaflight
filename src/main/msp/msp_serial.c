@@ -35,10 +35,12 @@
 #include "drivers/system.h"
 
 #include "io/serial.h"
+#include "io/rcdevice_cam.h"
 
 #include "msp/msp.h"
 
 #include "msp_serial.h"
+
 
 static mspPort_t mspPorts[MAX_MSP_PORT_COUNT];
 
@@ -491,6 +493,16 @@ void mspSerialProcess(mspEvaluateNonMspData_e evaluateNonMspData, mspProcessComm
         }
 
         mspPostProcessFnPtr mspPostProcessFn = NULL;
+
+        // 检查这个端口是否和rcdevice共用，如果是的话，当处于rcdevice remote mode时，则不处理osd消息
+        serialPortConfig_t *portCfg = serialFindPortConfiguration(mspPort->port->identifier);
+        if (portCfg) {
+            if (isSerialPortShared(portCfg, FUNCTION_MSP, FUNCTION_RCDEVICE)) {
+                if (rcdeviceIsInRemoteMode()) {
+                    continue;
+                }
+            }
+        }
 
         if (serialRxBytesWaiting(mspPort->port)) {
             // There are bytes incoming - abort pending request

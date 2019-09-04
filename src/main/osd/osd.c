@@ -679,7 +679,7 @@ STATIC_UNIT_TESTED void osdRefresh(timeUs_t currentTimeUs)
             if (IS_HI(THROTTLE) || IS_HI(PITCH)) {
                 resumeRefreshAt = currentTimeUs;
             }
-            displayHeartbeat(osdDisplayPort);
+            // displayHeartbeat(osdDisplayPort);
             return;
         } else {
             displayClearScreen(osdDisplayPort);
@@ -713,7 +713,7 @@ STATIC_UNIT_TESTED void osdRefresh(timeUs_t currentTimeUs)
     {
         osdUpdateAlarms();
         osdDrawElements(currentTimeUs);
-        displayHeartbeat(osdDisplayPort);
+        // displayHeartbeat(osdDisplayPort);
     }
 }
 

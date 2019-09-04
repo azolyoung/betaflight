@@ -36,6 +36,9 @@
 
 #include "rcdevice.h"
 
+#include "config/feature.h"
+#include "fc/config.h"
+
 #ifdef USE_RCDEVICE
 
 typedef struct runcamDeviceExpectedResponseLength_s {
@@ -274,10 +277,16 @@ void runcamDeviceInit(runcamDevice_t *device)
     serialPortFunction_e portID = FUNCTION_RCDEVICE;
     serialPortConfig_t *portConfig = findSerialPortConfig(portID);
     if (portConfig != NULL) {
-        device->serialPort = openSerialPort(portConfig->identifier, portID, NULL, NULL, 115200, MODE_RXTX, SERIAL_NOT_INVERTED);
-        device->info.protocolVersion = rcdeviceConfig()->protocolVersion;
+        device->serialPort = findSharedSerialPort(portID, FUNCTION_MSP);
+        // device->serialPort = openSerialPort(portConfig->identifier, portID, NULL, NULL, 115200, MODE_TX, SERIAL_NOT_INVERTED);
+        // device->info.protocolVersion = rcdeviceConfig()->protocolVersion;
         if (device->serialPort != NULL) {
-            runcamDeviceGetDeviceInfo(device);
+            // runcamDeviceGetDeviceInfo(device);
+            device->info.protocolVersion = RCDEVICE_PROTOCOL_VERSION_1_0;
+            device->info.features = RCDEVICE_PROTOCOL_FEATURE_SIMULATE_5_KEY_OSD_CABLE;
+            device->isReady = true;
+        } else {            
+            featureEnable(FEATURE_LED_STRIP);
         }
     }
 }

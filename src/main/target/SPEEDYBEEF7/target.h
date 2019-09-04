@@ -20,11 +20,11 @@
 
 #pragma once
 
-#define TARGET_BOARD_IDENTIFIER "SBF4"
-#define USBD_PRODUCT_STRING  "SpeedyBeeF4"
+#define TARGET_BOARD_IDENTIFIER "SBF7"
+#define USBD_PRODUCT_STRING  "SpeedyBeeF7"
 #define USE_TARGET_CONFIG
 
-#define LED0_PIN                PB9
+#define LED0_PIN                PC14
 
 #define USE_BEEPER
 #define BEEPER_PIN              PC13
@@ -40,7 +40,7 @@
 #define SPI1_MISO_PIN           PA6
 #define SPI1_MOSI_PIN           PA7
 
-#define GYRO_1_CS_PIN           PB11
+#define GYRO_1_CS_PIN           PA4
 #define GYRO_1_SPI_INSTANCE     SPI1
 
 #define USE_EXTI
@@ -49,9 +49,11 @@
 #define USE_MPU_DATA_READY_SIGNAL
 
 #define USE_GYRO
+#define USE_GYRO_SPI_ICM20689
 #define USE_GYRO_SPI_MPU6000
 
 #define USE_ACC
+#define USE_ACC_SPI_ICM20689
 #define USE_ACC_SPI_MPU6000
 
 #define USE_MAG
@@ -63,16 +65,20 @@
 #define USE_I2C
 
 #define USE_I2C_DEVICE_1
-#define I2C_DEVICE              (I2CDEV_1)
-#define I2C1_SCL                PB6        // SCL pad
-#define I2C1_SDA                PB7        // SDA pad
+#define I2C1_SCL                PB8        
+#define I2C1_SDA                PB9        
 #define BARO_I2C_INSTANCE       (I2CDEV_1)
+
+#define USE_I2C_DEVICE_2
+#define I2C_DEVICE              (I2CDEV_2)
+#define I2C2_SCL                PB10
+#define I2C2_SDA                PB11
 
 #define USE_BARO
 #define USE_BARO_BMP280
-#define USE_BARO_MS5611
-#define USE_BARO_BMP085
+#define DEFAULT_BARO_BMP280
 
+// *************** Flash **************************
 #define USE_SPI_DEVICE_3
 #define SPI3_SCK_PIN            PB3
 #define SPI3_MISO_PIN           PB4
@@ -91,13 +97,12 @@
 #define SPI2_MOSI_PIN           PB15
 
 // #define USE_MAX7456
-#define USE_RCDEVICE
 #define MAX7456_SPI_INSTANCE    SPI2
-#define MAX7456_SPI_CS_PIN      PB10
+#define MAX7456_SPI_CS_PIN      PB12
 
 // *************** UART *****************************
 #define USE_VCP
-#define USB_DETECT_PIN          PB12
+#define USB_DETECT_PIN          PC15
 #define USE_USB_DETECT
 
 #define USE_UART1
@@ -123,6 +128,8 @@
 #define USE_SOFTSERIAL1
 #define USE_SOFTSERIAL2
 
+#define SOFTSERIAL1_TX_PIN      PB0
+
 #define SERIAL_PORT_COUNT       8
 
 #define DEFAULT_RX_FEATURE      FEATURE_RX_SERIAL
@@ -131,8 +138,8 @@
 
 // *************** ADC *****************************
 #define USE_ADC
-#define ADC_INSTANCE         ADC1  // Default added
-#define ADC1_DMA_OPT            0  // DMA 2 Stream 0 Channel 0 
+#define ADC_INSTANCE         ADC1
+#define ADC1_DMA_OPT            0
 
 #define CURRENT_METER_ADC_PIN   PC1
 #define VBAT_ADC_PIN            PC2
@@ -141,7 +148,7 @@
 #define DEFAULT_FEATURES        (FEATURE_OSD | FEATURE_TELEMETRY | FEATURE_SOFTSERIAL)
 #define DEFAULT_VOLTAGE_METER_SOURCE    VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE    CURRENT_METER_ADC
-#define CURRENT_METER_SCALE_DEFAULT 302
+#define CURRENT_METER_SCALE_DEFAULT 102
 
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN PA3
@@ -152,7 +159,7 @@
 #define TARGET_IO_PORTD         (BIT(2))
 
 // *************** activate/deactivate Bluetooth When disarmed/armed using PINIO_BOX *****************************
-#define PINIO1_PIN PB0
+#define PINIO1_PIN PA15
 
-#define USABLE_TIMER_CHANNEL_COUNT 9
-#define USED_TIMERS             (TIM_N(1)|TIM_N(2)|TIM_N(4)|TIM_N(5)|TIM_N(8))
+#define USABLE_TIMER_CHANNEL_COUNT 10
+#define USED_TIMERS             (TIM_N(1)|TIM_N(3)|TIM_N(4)|TIM_N(5)|TIM_N(8))
