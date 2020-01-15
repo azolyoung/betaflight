@@ -109,7 +109,7 @@ static int writeString(displayPort_t *displayPort, uint8_t col, uint8_t row, uin
     buf[0] = 3;
     buf[1] = row;
     buf[2] = col;
-    buf[3] = displayPortProfileMsp()->attrValues[attr & DISPLAYPORT_ATTR_BLINK] & DISPLAYPORT_MSP_ATTR_MASK;
+    buf[3] = displayPortProfileMsp()->attrValues[attr & ~DISPLAYPORT_ATTR_BLINK] & DISPLAYPORT_MSP_ATTR_MASK;
 
     if (attr & DISPLAYPORT_ATTR_BLINK) {
         buf[3] |= DISPLAYPORT_MSP_ATTR_BLINK;
