@@ -20,6 +20,8 @@
 
 #pragma once
 
+#define USE_DISPLAYPORT_MSP_VENDOR_SPECIFIC
+
 #define TARGET_BOARD_IDENTIFIER "SBF4"
 #define USBD_PRODUCT_STRING  "SpeedyBeeF4"
 #define USE_TARGET_CONFIG
@@ -85,14 +87,14 @@
 #define ENABLE_BLACKBOX_LOGGING_ON_SPIFLASH_BY_DEFAULT
 
 // *************** OSD *****************************
-#define USE_SPI_DEVICE_2
-#define SPI2_SCK_PIN            PB13
-#define SPI2_MISO_PIN           PB14
-#define SPI2_MOSI_PIN           PB15
+// #define USE_SPI_DEVICE_2
+// #define SPI2_SCK_PIN            PB13
+// #define SPI2_MISO_PIN           PB14
+// #define SPI2_MOSI_PIN           PB15
 
-#define USE_MAX7456
-#define MAX7456_SPI_INSTANCE    SPI2
-#define MAX7456_SPI_CS_PIN      PB10
+// #define USE_MAX7456
+// #define MAX7456_SPI_INSTANCE    SPI2
+// #define MAX7456_SPI_CS_PIN      PB10
 
 // *************** UART *****************************
 #define USE_VCP
