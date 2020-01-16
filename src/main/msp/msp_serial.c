@@ -35,6 +35,7 @@
 #include "drivers/system.h"
 
 #include "io/displayport_msp.h"
+#include "io/rcdevice_cam.h"
 
 #include "msp/msp.h"
 
@@ -497,6 +498,19 @@ void mspSerialProcess(mspEvaluateNonMspData_e evaluateNonMspData, mspProcessComm
         mspPort_t * const mspPort = &mspPorts[portIndex];
         if (!mspPort->port) {
             continue;
+        }
+
+        const serialPortConfig_t *portCfg = serialFindPortConfiguration(mspPort->port->identifier);
+        if (portCfg) {
+            if (isSerialPortShared(portCfg, FUNCTION_MSP, FUNCTION_RCDEVICE)) {
+                // When MSP protocol & 5 keys simulation protocols are supported in RunCam Device, 
+                // the device needs to ignore the MSP messages when it on remote control mode, 
+                // else the 5 keys simulation feature will not work. 
+                // Because there are too many messages sent to the device, the 5 keys simulation message will be ignored.
+                if (rcdeviceIsInRemoteMode()) {
+                    continue;
+                }
+            }
         }
 
         mspPostProcessFnPtr mspPostProcessFn = NULL;

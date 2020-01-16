@@ -53,7 +53,7 @@ rcdeviceSwitchState_t switchStates[BOXCAMERA3 - BOXCAMERA1 + 1];
 bool rcdeviceInMenu = false;
 bool isButtonPressed = false;
 bool waitingDeviceResponse = false;
-
+static bool isEnteringCameraMenu = false;
 
 static bool isFeatureSupported(uint8_t feature)
 {
@@ -67,6 +67,11 @@ static bool isFeatureSupported(uint8_t feature)
 bool rcdeviceIsEnabled(void)
 {
     return camDevice->serialPort != NULL;
+}
+
+bool rcdeviceIsInRemoteMode()
+{
+    return rcdeviceInMenu || isEnteringCameraMenu;
 }
 
 static void rcdeviceCameraControlProcess(void)
@@ -153,6 +158,7 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
         if (operationID == RCDEVICE_PROTOCOL_5KEY_CONNECTION_OPEN) {
             if (errorCode == 1) {
                 rcdeviceInMenu = true;
+                isEnteringCameraMenu = false;
                 beeper(BEEPER_CAM_CONNECTION_OPEN);
             } else {
                 beeper(BEEPER_CAM_CONNECTION_CLOSE);
@@ -160,6 +166,7 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
         } else if (operationID == RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE) {
             if (errorCode == 1) {
                 rcdeviceInMenu = false;
+                isEnteringCameraMenu = false;
                 beeper(BEEPER_CAM_CONNECTION_CLOSE);
             }
         }
@@ -272,6 +279,8 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
             } else {
                 if (IS_MID(THROTTLE) && IS_MID(ROLL) && IS_MID(PITCH) && IS_HI(YAW)) { // Enter HI YAW
                     key = RCDEVICE_CAM_KEY_CONNECTION_OPEN;
+                    // set isEnteringCameraMenu to true, then we can sen
+                    isEnteringCameraMenu = true;
                 }
             }
         }

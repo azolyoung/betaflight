@@ -274,10 +274,14 @@ void runcamDeviceInit(runcamDevice_t *device)
     serialPortFunction_e portID = FUNCTION_RCDEVICE;
     const serialPortConfig_t *portConfig = findSerialPortConfig(portID);
     if (portConfig != NULL) {
-        device->serialPort = openSerialPort(portConfig->identifier, portID, NULL, NULL, 115200, MODE_RXTX, SERIAL_NOT_INVERTED);
-        device->info.protocolVersion = rcdeviceConfig()->protocolVersion;
-        if (device->serialPort != NULL) {
-            runcamDeviceGetDeviceInfo(device);
+        // is the port also has MSP enabled?
+        device->serialPort = findSharedSerialPort(FUNCTION_RCDEVICE, FUNCTION_MSP);
+        if (device->serialPort == NULL) {
+            device->serialPort = openSerialPort(portConfig->identifier, portID, NULL, NULL, 115200, MODE_RXTX, SERIAL_NOT_INVERTED);
+            device->info.protocolVersion = rcdeviceConfig()->protocolVersion;
+            if (device->serialPort != NULL) {
+                runcamDeviceGetDeviceInfo(device);
+            }
         }
     }
 }

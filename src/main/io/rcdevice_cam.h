@@ -43,5 +43,6 @@ void rcdeviceInit(void);
 void rcdeviceUpdate(timeUs_t currentTimeUs);
 
 bool rcdeviceIsEnabled(void);
+bool rcdeviceIsInRemoteMode();
 
 void rcdeviceSend5KeyOSDCableSimualtionEvent(rcdeviceCamSimulationKeyEvent_e key);

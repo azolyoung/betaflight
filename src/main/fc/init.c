@@ -900,10 +900,6 @@ void init(void)
     }
 #endif
 
-#ifdef USE_RCDEVICE
-    rcdeviceInit();
-#endif // USE_RCDEVICE
-
 #ifdef USE_PERSISTENT_STATS
     statsInit();
 #endif
@@ -911,6 +907,10 @@ void init(void)
     // Initialize MSP
     mspInit();
     mspSerialInit();
+
+#ifdef USE_RCDEVICE
+    rcdeviceInit();
+#endif // USE_RCDEVICE
 
 /*
  * CMS, display devices and OSD
