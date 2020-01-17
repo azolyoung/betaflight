@@ -166,7 +166,6 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
         } else if (operationID == RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE) {
             if (errorCode == 1) {
                 rcdeviceInMenu = false;
-                isEnteringCameraMenu = false;
                 beeper(BEEPER_CAM_CONNECTION_CLOSE);
             }
         }

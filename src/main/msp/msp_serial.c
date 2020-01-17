@@ -43,6 +43,25 @@
 
 static mspPort_t mspPorts[MAX_MSP_PORT_COUNT];
 
+static bool mspSerialIsRCDeviceBusy(mspPort_t * const mspPort)
+{
+    const serialPortConfig_t *portCfg = serialFindPortConfiguration(mspPort->port->identifier);
+    if (portCfg) {
+        if (portCfg->functionMask & FUNCTION_RCDEVICE) {
+        // if (isSerialPortShared(portCfg, FUNCTION_MSP, FUNCTION_RCDEVICE)) {
+            // When MSP protocol & 5 keys simulation protocols are supported in RunCam Device, 
+            // the device needs to ignore the MSP messages when it on remote control mode, 
+            // else the 5 keys simulation feature will not work. 
+            // Because there are too many messages sent to the device, the 5 keys simulation message will be ignored.
+            if (rcdeviceIsInRemoteMode()) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 static void resetMspPort(mspPort_t *mspPortToReset, serialPort_t *serialPort, bool sharedWithTelemetry)
 {
     memset(mspPortToReset, 0, sizeof(mspPort_t));
@@ -500,17 +519,8 @@ void mspSerialProcess(mspEvaluateNonMspData_e evaluateNonMspData, mspProcessComm
             continue;
         }
 
-        const serialPortConfig_t *portCfg = serialFindPortConfiguration(mspPort->port->identifier);
-        if (portCfg) {
-            if (isSerialPortShared(portCfg, FUNCTION_MSP, FUNCTION_RCDEVICE)) {
-                // When MSP protocol & 5 keys simulation protocols are supported in RunCam Device, 
-                // the device needs to ignore the MSP messages when it on remote control mode, 
-                // else the 5 keys simulation feature will not work. 
-                // Because there are too many messages sent to the device, the 5 keys simulation message will be ignored.
-                if (rcdeviceIsInRemoteMode()) {
-                    continue;
-                }
-            }
+        if (mspSerialIsRCDeviceBusy(mspPort)) {
+            continue;
         }
 
         mspPostProcessFnPtr mspPostProcessFn = NULL;
@@ -559,6 +569,10 @@ bool mspSerialWaiting(void)
             continue;
         }
 
+        if (mspSerialIsRCDeviceBusy(mspPort)) {
+            continue;
+        }
+
         if (serialRxBytesWaiting(mspPort->port)) {
             return true;
         }
@@ -581,6 +595,10 @@ int mspSerialPush(serialPortIdentifier_e port, uint8_t cmd, uint8_t *data, int d
 
         // XXX Kludge!!! Avoid zombie VCP port (avoid VCP entirely for now)
         if (!mspPort->port || mspPort->port->identifier == SERIAL_PORT_USB_VCP || (port != SERIAL_PORT_NONE && mspPort->port->identifier != port)) {
+            continue;
+        }
+
+        if (mspSerialIsRCDeviceBusy(mspPort)) {
             continue;
         }
 
@@ -609,6 +627,10 @@ uint32_t mspSerialTxBytesFree(void)
 
         // XXX Kludge!!! Avoid zombie VCP port (avoid VCP entirely for now)
         if (mspPort->port->identifier == SERIAL_PORT_USB_VCP) {
+            continue;
+        }
+
+        if (mspSerialIsRCDeviceBusy(mspPort)) {
             continue;
         }
 
