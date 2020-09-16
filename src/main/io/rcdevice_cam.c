@@ -36,6 +36,10 @@
 #include "io/serial.h"
 #include "io/rcdevice_cam.h"
 
+#include "msp/msp.h"
+#include "msp/msp_protocol.h"
+#include "msp/msp_serial.h"
+
 #include "rx/rx.h"
 
 #include "pg/rcdevice.h"
@@ -284,6 +288,15 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
     }
 }
 
+static void rcdeviceProcessDeviceRequest(runcamDeviceRequest_t *request)
+{
+    switch (request->command) {
+        case RCDEVICE_PROTOCOL_COMMAND__BF_MSP_REQUEST:
+            mspSerialPush(camDevice->serialPort->identifier, request->command, request->data, request->dataLength, MSP_DIRECTION_REQUEST);
+            break;
+    }
+}
+
 void rcdeviceUpdate(timeUs_t currentTimeUs)
 {
     rcdeviceReceive(currentTimeUs);
@@ -291,6 +304,13 @@ void rcdeviceUpdate(timeUs_t currentTimeUs)
     rcdeviceCameraControlProcess();
 
     rcdevice5KeySimulationProcess(currentTimeUs);
+
+    if (isFeatureSupported(RCDEVICE_PROTOCOL_FEATURE_BF_MSP)) {
+        runcamDeviceRequest_t *request = rcdeviceGetRequest();
+        if (request) {
+            rcdeviceProcessDeviceRequest(request);
+        }
+    }
 }
 
 void rcdeviceInit(void)
