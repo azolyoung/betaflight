@@ -59,7 +59,7 @@ bool isButtonPressed = false;
 bool waitingDeviceResponse = false;
 
 
-static bool isFeatureSupported(uint8_t feature)
+static bool isFeatureSupported(uint16_t feature)
 {
     if (camDevice->info.features & feature || rcdeviceConfig()->feature & feature) {
         return true;
